@@ -15,9 +15,10 @@
 
 int main() {
     int listenfd, connfd;
-    int n;
     char message[1001];
     struct sockaddr_in serveraddress;
+    struct sockaddr_in clientaddress;
+    socklen_t clientaddress_size;
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (listenfd < 0) {
         printf("socket error");
@@ -28,13 +29,11 @@ int main() {
     serveraddress.sin_addr.s_addr = htonl(INADDR_ANY);
     serveraddress.sin_port = htons(8080);
     bind(listenfd, (struct sockaddr *) &serveraddress, sizeof(serveraddress));
+    clientaddress_size = sizeof(clientaddress);
     listen(listenfd, 1024);
-    for(;;){
-        connfd = accept(listenfd, (struct sockaddr *) &serveraddress, NULL);
-        read(connfd,message,strlen(message));
-        printf("%s", message);
-    }
-
+    connfd = accept(listenfd, (struct sockaddr *) &clientaddress, &clientaddress_size);
+    read(connfd, message, strlen(message) - 1);
+    printf("Message Received: %s", message);
 
 
     return 0;

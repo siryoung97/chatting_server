@@ -17,19 +17,19 @@
 int main() {
     int sockfd;
     int cfd;
-    struct sockaddr_in clientaddress;
-    char message[1001];
+    struct sockaddr_in serveraddress;
+    char message[]="Hello World";
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         printf("socket error");
         exit(1);
     }
-    bzero(&clientaddress, sizeof(clientaddress));
-    clientaddress.sin_family = AF_INET;
-    clientaddress.sin_port = htons(8080);
-    inet_pton(AF_INET, "127.0.0.1", &clientaddress.sin_addr);
-    cfd = connect(sockfd, (struct sockaddr *) &clientaddress, sizeof(struct sockaddr_in));
-    gets(message);
+    bzero(&serveraddress, sizeof(serveraddress));
+    serveraddress.sin_family = AF_INET;
+    serveraddress.sin_port = htons(8080);
+    serveraddress.sin_addr.s_addr=inet_addr("127.0.0.1");
+    inet_pton(AF_INET, "127.0.0.1", &serveraddress.sin_addr);
+    cfd = connect(sockfd, (struct sockaddr *) &serveraddress, sizeof(struct sockaddr_in));
     write(cfd,message,strlen(message));
 
 
