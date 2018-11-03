@@ -6,12 +6,12 @@
 #include <strings.h>
 #include <unistd.h>
 
-/*void str_read(int sockfd) {
+void str_read(int sockfd) {
         int n;
         char message[1001];
-        read(sockfd,message,strlen(message));
+        read(sockfd,message,strlen(message)-1);
         printf("From Client: %s",message);
-}*/
+}
 
 int main() {
     char message[101];
@@ -33,7 +33,6 @@ int main() {
     clnt_addr_size = sizeof(cli_addr);
     client_sock = accept(serv_sock, (struct sockaddr *) &cli_addr, &clnt_addr_size);
     for (;;) {
-        read(client_sock, message, sizeof(message) - 1);
-        printf("Message: %s\n", message);
+        str_read(client_sock);
     }
 }

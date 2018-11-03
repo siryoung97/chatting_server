@@ -6,13 +6,13 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-/*void str_cli(FILE *fp, int sockfd) {
+void str_cli(int sockfd) {
     char sendmessage[1001];
-    while (fgets(sendmessage, strlen(sendmessage), fp) != NULL)
-        write(sockfd, sendmessage, strlen(sendmessage));
+    gets(sendmessage);
+    write(sockfd, sendmessage, strlen(sendmessage));
 
 
-}*/
+}
 
 int main() {
     int sock;
@@ -27,6 +27,6 @@ int main() {
     serv_addr.sin_port = htons(8080);
     connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
     for (;;) {
-        write(sock, message, sizeof(message));
+        str_cli(sock);
     }
 }
