@@ -14,27 +14,26 @@
 }*/
 
 int main() {
-    int listenfd, connfd;
-    char message[1001];
-    struct sockaddr_in serveraddress;
-    struct sockaddr_in clientaddress;
-    socklen_t clientaddress_size;
-    listenfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (listenfd < 0) {
-        printf("socket error");
-        exit(1);
+    char message[101];
+    int serv_sock;
+    int client_sock;
+
+    struct sockaddr_in serv_addr;
+    struct sockaddr_in cli_addr;
+    socklen_t clnt_addr_size;
+
+
+    serv_sock = socket(AF_INET, SOCK_STREAM, 0);
+    bzero(&serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(8080);
+    bind(serv_sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+    listen(serv_sock, 1024);
+    clnt_addr_size = sizeof(cli_addr);
+    client_sock = accept(serv_sock, (struct sockaddr *) &cli_addr, &clnt_addr_size);
+    for (;;) {
+        read(client_sock, message, sizeof(message) - 1);
+        printf("Message: %s\n", message);
     }
-    bzero(&serveraddress, sizeof(serveraddress));
-    serveraddress.sin_family = AF_INET;
-    serveraddress.sin_addr.s_addr = htonl(INADDR_ANY);
-    serveraddress.sin_port = htons(8080);
-    bind(listenfd, (struct sockaddr *) &serveraddress, sizeof(serveraddress));
-    clientaddress_size = sizeof(clientaddress);
-    listen(listenfd, 1024);
-    connfd = accept(listenfd, (struct sockaddr *) &clientaddress, &clientaddress_size);
-    read(connfd, message, strlen(message) - 1);
-    printf("Message Received: %s", message);
-
-
-    return 0;
 }

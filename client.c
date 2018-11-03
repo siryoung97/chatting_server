@@ -15,23 +15,18 @@
 }*/
 
 int main() {
-    int sockfd;
-    int cfd;
-    struct sockaddr_in serveraddress;
-    char message[]="Hello World";
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        printf("socket error");
-        exit(1);
+    int sock;
+    struct sockaddr_in serv_addr;
+    char message[101];
+    gets(message);
+    int str_len;
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    bzero(&serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serv_addr.sin_port = htons(8080);
+    connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
+    for (;;) {
+        write(sock, message, sizeof(message));
     }
-    bzero(&serveraddress, sizeof(serveraddress));
-    serveraddress.sin_family = AF_INET;
-    serveraddress.sin_port = htons(8080);
-    serveraddress.sin_addr.s_addr=inet_addr("127.0.0.1");
-    inet_pton(AF_INET, "127.0.0.1", &serveraddress.sin_addr);
-    cfd = connect(sockfd, (struct sockaddr *) &serveraddress, sizeof(struct sockaddr_in));
-    write(cfd,message,strlen(message));
-
-
-    return 0;
 }
