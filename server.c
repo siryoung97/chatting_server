@@ -6,14 +6,16 @@
 #include <strings.h>
 #include <unistd.h>
 
-void str_read(int sockfd) {
+
+void str_read(FILE *fp, int sockfd) {
     char message[1001];
-    if (read(sockfd,message, sizeof(message))<0) {
+    if (read(sockfd, message, sizeof(message)) < 0) {
         printf("Server Error");
         exit(1);
     }
-    read(sockfd,message, sizeof(message)-1);
-    printf("From Client: %s", message);
+    read(sockfd, message, sizeof(message) - 1);
+    fputs(message, fp);
+    /*printf("From Client: %s", message);*/
 }
 
 int main() {
@@ -35,7 +37,9 @@ int main() {
     listen(serv_sock, 1024);
     clnt_addr_size = sizeof(cli_addr);
     client_sock = accept(serv_sock, (struct sockaddr *) &cli_addr, &clnt_addr_size);
-    while (1) {
-        str_read(client_sock);
+    for (;;) {
+        str_read(stdout, client_sock);
+
     }
+
 }
