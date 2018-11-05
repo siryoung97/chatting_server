@@ -6,19 +6,16 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-void str_cli(int sockfd) {
+void str_cli(FILE*fp, int sockfd) {
     char sendmessage[1001];
-    gets(sendmessage);
-    write(sockfd, sendmessage, strlen(sendmessage));
-
-
+    while(fgets(sendmessage,1001,fp)) {
+        write(sockfd,sendmessage, sizeof(sendmessage));
+    }
 }
 
 int main() {
     int sock;
     struct sockaddr_in serv_addr;
-    char message[101];
-    gets(message);
     int str_len;
     sock = socket(AF_INET, SOCK_STREAM, 0);
     bzero(&serv_addr, sizeof(serv_addr));
@@ -26,7 +23,7 @@ int main() {
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     serv_addr.sin_port = htons(8080);
     connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
-    for (;;) {
-        str_cli(sock);
+    while (1) {
+        str_cli(stdin,sock);
     }
 }

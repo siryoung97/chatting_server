@@ -7,10 +7,13 @@
 #include <unistd.h>
 
 void str_read(int sockfd) {
-        int n;
-        char message[1001];
-        read(sockfd,message,strlen(message)-1);
-        printf("From Client: %s",message);
+    char message[1001];
+    if (read(sockfd,message, sizeof(message))<0) {
+        printf("Server Error");
+        exit(1);
+    }
+    read(sockfd,message, sizeof(message)-1);
+    printf("From Client: %s", message);
 }
 
 int main() {
@@ -32,7 +35,7 @@ int main() {
     listen(serv_sock, 1024);
     clnt_addr_size = sizeof(cli_addr);
     client_sock = accept(serv_sock, (struct sockaddr *) &cli_addr, &clnt_addr_size);
-    for (;;) {
+    while (1) {
         str_read(client_sock);
     }
 }
