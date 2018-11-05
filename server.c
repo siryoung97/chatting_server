@@ -20,23 +20,21 @@ void str_read(FILE *fp, int sockfd) {
 
 int main() {
     char message[101];
-    int serv_sock;
-    int client_sock;
+    int server_sock, client_sock;
 
-    struct sockaddr_in serv_addr;
-    struct sockaddr_in cli_addr;
-    socklen_t clnt_addr_size;
+    struct sockaddr_in server_address, client_address;
+    socklen_t client_address_size;
 
 
-    serv_sock = socket(AF_INET, SOCK_STREAM, 0);
-    bzero(&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(8080);
-    bind(serv_sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
-    listen(serv_sock, 1024);
-    clnt_addr_size = sizeof(cli_addr);
-    client_sock = accept(serv_sock, (struct sockaddr *) &cli_addr, &clnt_addr_size);
+    server_sock = socket(AF_INET, SOCK_STREAM, 0);
+    bzero(&server_address, sizeof(server_address));
+    server_address.sin_family = AF_INET;
+    server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_address.sin_port = htons(8080);
+    bind(server_sock, (struct sockaddr *) &server_address, sizeof(server_address));
+    listen(server_sock, 1024);
+    client_address_size = sizeof(client_address);
+    client_sock = accept(server_sock, (struct sockaddr *) &client_address, &client_address_size);
     for (;;) {
         str_read(stdout, client_sock);
 
