@@ -5,25 +5,57 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <pthread.h>
 
-void str_cli(FILE *fp, int sockfd) {
-    char sendmessage[1001];
-    while (fgets(sendmessage, 1001, fp)) {
-        write(sockfd, sendmessage, sizeof(sendmessage));
-    }
-}
+#define buffersize 100
+
+void *receive_message(void *arg);
+
+void *send_message(void *arg);
 
 int main() {
     int sock;
-    struct sockaddr_in serv_addr;
-    int str_len;
+    struct sockaddr_in server_address;
+    pthread_t send_thread, receive_thread;
+
+    bzero(&server_address, sizeof(server_address));
+    server_address.sin_family = AF_INET;
+    server_address.sin_addr.s_addr = htons(INADDR_ANY);
+    server_address.sin_port = htonl(8080);
+
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    bzero(&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    serv_addr.sin_port = htons(8080);
-    connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
-    while (1) {
-        str_cli(stdin, sock);
+
+    connect(sock, (struct sockaddr *) &server_address, sizeof(server_address));
+
+    pthread_create(&send_thread, NULL,send_message, (void *) sock);
+    pthread_create(&receive_thread, NULL,receive_message, (void *) sock);
+    close(sock);
+    return 0;
+}
+
+void *send_message(void *arg) {
+    int sock = *((int *)arg);
+    char message[buffersize];
+    while (1){
+        fgets(message,buffersize,stdin);
+        if(!strcmp(message,"q\n")||strcmp(message,"q\n"))
+        {
+            close(sock);
+            exit(0);
+        }
+        write(sock,message,strlen(message));
     }
+    return NULL;
+}
+
+void *receive_message(void *arg) {
+    int sock = *((int *)arg);
+    char message[buffersize];
+    int str_len;
+    while (1){
+        str_len=read(sock,message, sizeof(message)-1);
+        message[str_len]=0;
+        fputs(message,stdout);
+    }
+    return NULL;
 }
