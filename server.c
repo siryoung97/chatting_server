@@ -14,6 +14,7 @@ int main() {
     struct sockaddr_in server_address, client_address;
     unsigned int client_address_size;
     int pid;
+    char message[100];
     server_sock = socket(AF_INET, SOCK_STREAM, 0);
     bzero(&server_address, sizeof(server_address));
     server_address.sin_family = AF_INET;
@@ -25,15 +26,21 @@ int main() {
     for (;;) {
         client_sock = accept(server_sock, (struct sockaddr *) &server_address, &client_address_size);
         client_count++;
-        if ((pid = fork()) == 0) {
-            if (client_sock != 0) {
-                printf("%d", client_count);
+        if ((pid = fork()) == 0)
+        {
+            if (client_sock != 0)
+            {
+                while(1)
+                {
+                    read(client_sock,message, sizeof(message)-1);
+                    fputs(message,stdout);
+                }
 
             }
             close(client_sock);
             exit(0);
         }
-        close(client_sock);
+        /*close(client_sock);*/
     }
 
     return 0;
