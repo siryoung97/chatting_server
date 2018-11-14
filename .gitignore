@@ -1,5 +1,9 @@
+# IDE
+.idea
+
+# Build
 cmake-build-debug
-/.idea/
-.idea/workspace.xml
-CMakeLists.txt
+
+# Output
 *.o
+bin
