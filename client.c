@@ -16,11 +16,7 @@ int main(){
     server_address.sin_port=htons(8080);
     server_address.sin_addr.s_addr=htonl(INADDR_ANY);
     connect(sock,(struct sockaddr *)&server_address, sizeof(server_address));
-    while(1){
-        fgets(message, sizeof(message),stdin);
-        write(sock,message, sizeof(message));
 
-    }
 
     return 0;
 }

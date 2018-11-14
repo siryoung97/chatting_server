@@ -23,25 +23,6 @@ int main() {
     client_address_size = sizeof(client_address);
     bind(server_sock, (struct sockaddr *) &server_address, sizeof(server_address));
     listen(server_sock, client_max);
-    for (;;) {
-        client_sock = accept(server_sock, (struct sockaddr *) &server_address, &client_address_size);
-        client_count++;
-        if ((pid = fork()) == 0)
-        {
-            if (client_sock != 0)
-            {
-                while(1)
-                {
-                    read(client_sock,message, sizeof(message)-1);
-                    fputs(message,stdout);
-                }
-
-            }
-            close(client_sock);
-            exit(0);
-        }
-        /*close(client_sock);*/
-    }
-
+    client_sock = accept(server_sock, (struct sockaddr *) &server_address, &client_address_size);
     return 0;
 }
