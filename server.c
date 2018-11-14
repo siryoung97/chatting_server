@@ -23,6 +23,11 @@ int main() {
     client_address_size = sizeof(client_address);
     bind(server_sock, (struct sockaddr *) &server_address, sizeof(server_address));
     listen(server_sock, client_max);
-    client_sock = accept(server_sock, (struct sockaddr *) &server_address, &client_address_size);
+    while (1){
+        client_sock = accept(server_sock, (struct sockaddr *) &server_address, &client_address_size);
+        printf("client accepted");
+        client_count++;
+        printf("%d",client_count);
+    }
     return 0;
 }
