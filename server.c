@@ -1,33 +1,60 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/event.h>
 #include <arpa/inet.h>
+
 #include <strings.h>
 #include <unistd.h>
 
-int client_max = 100;
-int client_count = 0;
+#define backlog 10
+#define portnumber 8080
+#define maxlength 100
+
+void Bind(int socket) {
+
+    struct sockaddr_in server;
+    bzero(&server, sizeof(server));
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
+    server.sin_port = htonl(portnumber);
+
+    if (bind(socket, (struct sockaddr *) &server, sizeof(server)) == -1);
+    {
+        printf("error while binding socket");
+        exit(1);
+    }
+
+}
+
+void Listen(int socket) {
+    listen(socket, backlog);
+    if (listen(socket, backlog) == -1) {
+        printf("error while listening for socket");
+        exit(1);
+    }
+}
 
 int main() {
-    int server_sock, client_sock;
-    struct sockaddr_in server_address, client_address;
-    unsigned int client_address_size;
-    int pid;
-    char message[100];
-    server_sock = socket(AF_INET, SOCK_STREAM, 0);
-    bzero(&server_address, sizeof(server_address));
-    server_address.sin_family = AF_INET;
-    server_address.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_address.sin_port = htons(8080);
-    client_address_size = sizeof(client_address);
-    bind(server_sock, (struct sockaddr *) &server_address, sizeof(server_address));
-    listen(server_sock, client_max);
-    while (1){
-        client_sock = accept(server_sock, (struct sockaddr *) &server_address, &client_address_size);
-        printf("client accepted");
-        client_count++;
-        printf("%d",client_count);
+    int listening_socket;
+    listening_socket = socket(AF_INET, SOCK_STREAM, 0);
+
+    Bind(listening_socket);
+    Listen(listening_socket);
+
+    while (1) {
+        ssize_t client_size;
+        struct sockaddr_in client;
+        client_size = sizeof(client);
+        int client_socket;
+        client_socket = accept(listening_socket, (struct sockaddr *) &client, &client_size);
+
+        char message[maxlength + 1];
+
     }
+
+
     return 0;
 }

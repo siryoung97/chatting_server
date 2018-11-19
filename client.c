@@ -5,18 +5,30 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-int maxbuffer =101;
-int main(){
-    int sock;
-    struct sockaddr_in server_address;
-    char message[maxbuffer];
-    sock=socket(AF_INET,SOCK_STREAM,0);
-    bzero(&server_address, sizeof(server_address));
-    server_address.sin_family=AF_INET;
-    server_address.sin_port=htons(8080);
-    server_address.sin_addr.s_addr=htonl(INADDR_ANY);
-    connect(sock,(struct sockaddr *)&server_address, sizeof(server_address));
 
+typedef int fd;
+#define maxlength 100
+
+void sendmessage(int sock){
+    char message[maxlength + 1];
+    fputs(message,stdin);
+    write(sock,message, sizeof(message));
+}
+int main() {
+    fd sock;
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+
+    struct sockaddr_in server;
+    bzero(&server, sizeof(server));
+    server.sin_port = htons(8080);
+    server.sin_family = AF_INET;
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    connect(sock, (struct sockaddr *) &server, sizeof(server));
+
+    while (1) {
+        sendmessage(sock);
+    }
 
     return 0;
 }

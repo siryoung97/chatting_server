@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.12)
-project(chatting_server C)
+project(PROJECT C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(chatting_server client.c server.c)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY binary)
+
+set(CMAKE_CURRENT_BINARY_DIR binary)
+
+add_executable(client client.c)
+
+add_executable(server server.c)
