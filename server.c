@@ -13,7 +13,7 @@
 #define portnumber 8080
 #define maxlength 100
 
-void Bind(int socket) {
+void Bind_Socket(int socket) {
 
     struct sockaddr_in server;
     bzero(&server, sizeof(server));
@@ -23,16 +23,16 @@ void Bind(int socket) {
 
     if (bind(socket, (struct sockaddr *) &server, sizeof(server)) == -1);
     {
-        printf("error while binding socket");
+        perror("Error Binding Socket");
         exit(1);
     }
 
 }
 
-void Listen(int socket) {
+void Listen_For_Socket(int socket) {
     listen(socket, backlog);
     if (listen(socket, backlog) == -1) {
-        printf("error while listening for socket");
+        perror("Error While Listening For Socket");
         exit(1);
     }
 }
@@ -41,8 +41,8 @@ int main() {
     int listening_socket;
     listening_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-    Bind(listening_socket);
-    Listen(listening_socket);
+    Bind_Socket(listening_socket);
+    Listen_For_Socket(listening_socket);
 
     while (1) {
         ssize_t client_size;
@@ -51,7 +51,6 @@ int main() {
         int client_socket;
         client_socket = accept(listening_socket, (struct sockaddr *) &client, &client_size);
 
-        char message[maxlength + 1];
 
     }
 
