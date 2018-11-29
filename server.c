@@ -13,16 +13,21 @@
 #define portnumber 8080
 #define maxlength 100
 
+void read_message(int socket) {
+    char message[maxlength + 1];
+    read(socket, message, sizeof(message) - 1);
+    fputs(message,stdout);
+}
+
 void Bind_Socket(int socket) {
 
     struct sockaddr_in server;
     bzero(&server, sizeof(server));
     server.sin_family = AF_INET;
-    server.sin_addr.s_addr = htonl(INADDR_ANY);
-    server.sin_port = htonl(portnumber);
+    server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_port = htons(portnumber);
 
-    if (bind(socket, (struct sockaddr *) &server, sizeof(server)) == -1);
-    {
+    if (bind(socket, (struct sockaddr *) &server, sizeof(server)) == -1) {
         perror("Error Binding Socket");
         exit(1);
     }
@@ -45,13 +50,12 @@ int main() {
     Listen_For_Socket(listening_socket);
 
     while (1) {
-        ssize_t client_size;
+        unsigned int client_size;
         struct sockaddr_in client;
         client_size = sizeof(client);
         int client_socket;
         client_socket = accept(listening_socket, (struct sockaddr *) &client, &client_size);
-
-
+        read_message(client_socket);
     }
 
 
